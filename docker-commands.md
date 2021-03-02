@@ -1,7 +1,7 @@
 <h2>Образы</h2>
-docker images // Список образов, уже скачанных на компьютер<br>
-docker stats // Инфа о потребляемых докером ресурсах<br>
-docker pull // Для гарантированного обновления образа<br>
+**docker images** // Список образов, уже скачанных на компьютер<br>
+**docker stats** // Инфа о потребляемых докером ресурсах<br>
+**docker pull** // Для гарантированного обновления образа<br>
 
 
 <h2>Контейнеры</h2>
@@ -17,13 +17,13 @@ docker pull // Для гарантированного обновления об
 <li>docker logs -f container_id // обновляемый вывод логов</li>
 </ul>
 
-Запуск и останов контейнера<br>
-docker container start/stop [container name1] [container name2] [...]
+Запуск и останов контейнера:<br>
+**docker container start/stop [container name1] [container name2] [...]**
 
-Остановка контейнера<br>
+Остановка контейнера:<br>
 **docker kill container_id/alias**
 
-Удалить образ из докера. -f удалит образ и все контейнеры, с ним связанные.<br>
+Удалить образ из докера. -f удалит образ и все контейнеры, с ним связанные:<br>
 **docker rmi <imagename>**
 
 Удалить все "неиспользуемые" ресурсы:<br>
@@ -33,20 +33,45 @@ docker container start/stop [container name1] [container name2] [...]
 **docker system prune -a**
 
 
-Посмотреть адреса контейнера
-ip addr show docker0
-docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' myContainerID
+Посмотреть адреса контейнера:<br>
+**ip addr show docker0**<br>
+**docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' myContainerID**
 
 <h2>Работа внутри контейнера</h2>
-sudo docker run -it nginx bash // Внутри контейнера nginx:
-sudo docker run nginx cat /etc/nginx/nginx.conf // возвращает содержимое nginx.conf из контейнера
+**sudo docker run -it nginx bash** // Внутри контейнера nginx <br>
+**sudo docker run nginx cat /etc/nginx/nginx.conf** // возвращает содержимое nginx.conf из контейнера<br>
 
+**docker run -d -p 8080:80 -p 443:443 nginx** // -d - работа в фоне. Выводит идентификатор контейнера и возвращает управление. -p 8080:80 пробрасывает порты 8080 и 443 извне на порты 80 и 443 внутри контейнера<br>
 
-docker run -d -p 8080:80 -p 443:443 nginx // -d - работа в фоне. Выводит идентификатор контейнера и возвращает управление. -p 8080:80 пробрасывает порты 8080 и 443 извне на порты 80 и 443 внутри контейнера
-docker run -it -v ~/.bash_history:/root/.bash_history ubuntu bash // пробрасывает часть файловой системы. Путь до файла во внешней системе должен быть абсолютным. Файлы во внутренней ФС создаются, существующие - затираются.
-Переменные окружения:
-Флаг -e. Используется он так: docker run -it -e "HOME=/tmp" ubuntu bash
-Специальный файл, содержащий определения переменных окружения, который пробрасывается внутрь контейнера опцией --env-file.
+**docker run -it -v ~/.bash_history:/root/.bash_history ubuntu bash** // пробрасывает часть файловой системы. Путь до файла во внешней системе должен быть абсолютным. Файлы во внутренней ФС создаются, существующие - затираются.<br>
+
+Переменные окружения:<br>
+Флаг -e. Используется он так:<br> 
+**docker run -it -e "HOME=/tmp" ubuntu bash**
+ - Специальный файл, содержащий определения переменных окружения, который пробрасывается внутрь контейнера опцией --env-file.
+
+<h2>Volumes</h2>
+Создать именованный том:<br>
+**docker volume create volume-name**<br>
+
+Параметр для запуска контейнера с томом:<br>
+<ul>
+<li>**-v volume-name:/etc/volumename**</li>
+<li>**-v /path/to/data:/usr/local/data**<li>
+</ul>
+
+**-w /app** - sets the “working directory” or the current directory that the command will run from<br>
+**-v "$(pwd):/app"** - bind mount the current directory from the host in the container into the /app directory<br>
+
+<h2>Network</h2>
+<ol>
+<li>Create the network:<br>
+**docker network create network-name**</li>
+<li>Start a MySQL container and attach it to the network.<br>
+**docker run -d --network network-name --network-alias postgres -v mydb:/var/lib/mydb -e POSTGRES_PASSWORD=mysecretpassword postgres**</li>
+<li>Сonnect to the database and verify it connects.<br>
+docker exec -it <mysql-container-id> mysql -p</li>
+</ol>
 
 <h2>Docker Hub</h2>
 Войти в учетку докера:
@@ -73,47 +98,12 @@ Docker Compose - инструмент для запуска многоконте
 
 
 
-Чуть подробнее:
-- создать Dockerfile
-- создaть файл для docker-compose
-- запуск 
-	запаковать с помощью gradle
-	извлечь jar-ки
-	запустить docker-compose build && docker-compose up
-
-Из medium.com
-1. create a volume for store data.
-docker create -v /var/lib/postgresql/data --name PostgresData alpine
-2. create the database.
-docker run -p 5432:5432 --name postgres -e POSTGRES_PASSWORD=admin -d --volumes-from PostgresData postgres
-3. connect to db by containerid
-docker exec -it <containerid> bash
-psql -U postgres
-create, insert, all that stuff
-
-Запуск по отдельности:
-docker run -d -p 5432:5432 postgres
-
-
-From Sysout.ru
-1. Запускаем контейнер с базой
-docker run --name some-postgres --volume db-data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=qqq -e POSTGRES_DB=vv -p 5434:5432 postgres:12-alpine
-
-2. создаем docker-compose.yml
-docker-compose.yml лежит в корне иерархии рядом с папкой services, в которой перечислены сервисы – то есть компоненты, из который состоит наш проект.
-
-3. запускаем docker-compose
-docker-compose up
-
-
-
-
 # Dockerfile for AWS
 FROM openjdk:8-jdk-alpine
 RUN addgroup -S timqergroup && adduser -S timeruser -G timergroup
 USER timeruser:timqergroup
 
-
+ docker run --rm -dp 3000:3000 -w /app -v "$(pwd):/app" node:12-alpine sh -c "yarn install && yarn run dev"
 
 
 Еще подход:
