@@ -1,26 +1,7 @@
-<h2>Полезные командочки</h2>
-sudo lsof -i -P -n | grep LISTEN
-sudo netstat -tulpn | grep LISTEN
-sudo lsof -i:22 ## see a specific port such as 22 ##
-top -p `pgrep -d "," postgres` // поиск по имени процесса. Если не найден, будет ошибка "требуется аргумент"
-
-
-sudo docker run -it nginx bash // Внутри контейнера nginx:
-sudo docker run nginx cat /etc/nginx/nginx.conf // возвращает содержимое nginx.conf из контейнера
-
-
-Registry. Хранилище образов.
-Репозиторий пакетов любого пакетного менеджера. https://store.docker.com/ (либо по старому адресу https://hub.docker.com/), кликнув по ссылке Containers.
-
-
-docker pull // Для гарантированного обновления образа
-
-docker logs container_id // вывод логов запущенного контейнера
-docker logs -f container_id // обновляемый вывод логов
-
 <h2>Образы</h2>
-docker images // Список образов, уже скачанных на компьютер
-docker stats // Инфа о потребляемых докером ресурсах
+docker images // Список образов, уже скачанных на компьютер<br>
+docker stats // Инфа о потребляемых докером ресурсах<br>
+docker pull // Для гарантированного обновления образа<br>
 
 
 <h2>Контейнеры</h2>
@@ -30,20 +11,26 @@ docker stats // Инфа о потребляемых докером ресурс
 <li>docker ps (old style)</li>
 </ul>
 
-Запуск и останов контейнера
+Логи
+<ul>
+<li>docker logs container_id // вывод логов запущенного контейнера</li>
+<li>docker logs -f container_id // обновляемый вывод логов</li>
+</ul>
+
+Запуск и останов контейнера<br>
 docker container start/stop [container name1] [container name2] [...]
 
-Остановка контейнера
-docker kill container_id/alias
+Остановка контейнера<br>
+**docker kill container_id/alias**
 
-Удалить образ из докера. -f удалит образ и все контейнеры, с ним связанные.
-docker rmi <imagename>
+Удалить образ из докера. -f удалит образ и все контейнеры, с ним связанные.<br>
+**docker rmi <imagename>**
 
-Удалить все "неиспользуемые" ресурсы:
-docker system prune
+Удалить все "неиспользуемые" ресурсы:<br>
+**docker system prune**
 
-Удалить ВСЕ существующие ресурсы:
-docker system prune -a
+Удалить ВСЕ существующие ресурсы:<br>
+**docker system prune -a**
 
 
 Посмотреть адреса контейнера
