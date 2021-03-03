@@ -1,7 +1,9 @@
 <h2>Образы</h2>
-**docker images** // Список образов, уже скачанных на компьютер
-**docker stats** // Инфа о потребляемых докером ресурсах
-**docker pull** // Для гарантированного обновления образа
+
+**docker images** // Список образов, уже скачанных на компьютер<br>
+**docker stats** // Инфа о потребляемых докером ресурсах<br>
+**docker pull** // Для гарантированного обновления образа<br>
+**docker build -t image-name .** // Создание образа
 
 
 <h2>Контейнеры</h2>
@@ -13,8 +15,10 @@
 
 Логи
 <ul>
-<li>docker logs container_id // вывод логов запущенного контейнера</li>
-<li>docker logs -f container_id // обновляемый вывод логов</li>
+<li>
+**docker logs container_id** // вывод логов запущенного контейнера</li>
+<li>
+**docker logs -f container_id** // обновляемый вывод логов</li>
 </ul>
 
 Запуск и останов контейнера:<br>
@@ -38,6 +42,7 @@
 **docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' myContainerID**
 
 <h2>Работа внутри контейнера</h2>
+
 **sudo docker run -it nginx bash** // Внутри контейнера nginx <br>
 **sudo docker run nginx cat /etc/nginx/nginx.conf** // возвращает содержимое nginx.conf из контейнера<br>
 
@@ -46,18 +51,22 @@
 **docker run -it -v ~/.bash_history:/root/.bash_history ubuntu bash** // пробрасывает часть файловой системы. Путь до файла во внешней системе должен быть абсолютным. Файлы во внутренней ФС создаются, существующие - затираются.<br>
 
 Переменные окружения:<br>
-Флаг -e. Используется он так:<br> 
+Флаг -e. Используется он так:<br>
 **docker run -it -e "HOME=/tmp" ubuntu bash**
- - Специальный файл, содержащий определения переменных окружения, который пробрасывается внутрь контейнера опцией --env-file.
+
+Специальный файл, содержащий определения переменных окружения, который пробрасывается внутрь контейнера опцией --env-file.
+
+
 
 <h2>Volumes</h2>
+
 Создать именованный том:<br>
 **docker volume create volume-name**<br>
 
 Параметр для запуска контейнера с томом:<br>
 <ul>
-<li>**-v volume-name:/etc/volumename**</li>
-<li>**-v /path/to/data:/usr/local/data**<li>
+**<li>-v volume-name:/etc/volumename</li>**
+**<li>-v /path/to/data:/usr/local/data**<li>
 </ul>
 
 **-w /app** - sets the “working directory” or the current directory that the command will run from<br>
@@ -67,29 +76,37 @@
 <ol>
 <li>Create the network:<br>
 **docker network create network-name**</li>
+
 <li>Start a MySQL container and attach it to the network.<br>
 **docker run -d --network network-name --network-alias postgres -v mydb:/var/lib/mydb -e POSTGRES_PASSWORD=mysecretpassword postgres**</li>
+
 <li>Сonnect to the database and verify it connects.<br>
-docker exec -it <mysql-container-id> mysql -p</li>
+**docker exec -it <mysql-container-id> mysql -p</li>**
 </ol>
 
 Получить информацию о сетевых параметрах с помощью Netshoot:<br>
-</ul>
-<li>**docker run -it --network todo-app nicolaka/netshoot**</li>
-<li>**dig mysql** // mysql здесь, это параметр --network-alias</li>
-<li>или проще: **docker inspect flamboyant_bardeen | grep IPAddress**</li>
+<ul>
+<li>
+**docker run -it --network todo-app nicolaka/netshoot**</li>
+
+<li>
+**dig mysql** // mysql здесь, это параметр --network-alias</li>
+
+<li>
+или проще: **docker inspect flamboyant_bardeen | grep IPAddress**</li>
 </ul>
 
 
 <h2>Docker Hub</h2>
+
 Войти в учетку докера:
-docker login -u YOUR-USER-NAME
+**docker login -u YOUR-USER-NAME**
 
 Пометить образ:
-docker tag getting-started pjamarama/getting-started
+**docker tag getting-started pjamarama/getting-started**
 
 Запушить образ на хаб:
-docker push pjamarama/getting-started
+**docker push pjamarama/getting-started**
 
 
 Создание Dockerfile - файла с инструкциями для создания контейнера
