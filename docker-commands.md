@@ -1,7 +1,7 @@
 <h2>Образы</h2>
-**docker images** // Список образов, уже скачанных на компьютер<br>
-**docker stats** // Инфа о потребляемых докером ресурсах<br>
-**docker pull** // Для гарантированного обновления образа<br>
+**docker images** // Список образов, уже скачанных на компьютер
+**docker stats** // Инфа о потребляемых докером ресурсах
+**docker pull** // Для гарантированного обновления образа
 
 
 <h2>Контейнеры</h2>
@@ -72,6 +72,14 @@
 <li>Сonnect to the database and verify it connects.<br>
 docker exec -it <mysql-container-id> mysql -p</li>
 </ol>
+
+Получить информацию о сетевых параметрах с помощью Netshoot:<br>
+</ul>
+<li>**docker run -it --network todo-app nicolaka/netshoot**</li>
+<li>**dig mysql** // mysql здесь, это параметр --network-alias</li>
+<li>или проще: **docker inspect flamboyant_bardeen | grep IPAddress**</li>
+</ul>
+
 
 <h2>Docker Hub</h2>
 Войти в учетку докера:
