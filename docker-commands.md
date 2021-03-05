@@ -9,15 +9,22 @@
 <h2>Контейнеры</h2>
 Информация о запущенных контейнерах. -a все контейнеры (включая остановленные)
 <ul>
-<li>docker container ls</li>
-<li>docker ps (old style)</li>
+<li>
+
+**docker container ls**</li>
+<li>
+
+**docker ps (old style)**</li>
 </ul>
 
 Логи
 <ul>
+
 <li>
+
 **docker logs container_id** // вывод логов запущенного контейнера</li>
 <li>
+
 **docker logs -f container_id** // обновляемый вывод логов</li>
 </ul>
 
@@ -65,6 +72,7 @@
 
 Параметр для запуска контейнера с томом:<br>
 <ul>
+
 **<li>-v volume-name:/etc/volumename</li>**
 **<li>-v /path/to/data:/usr/local/data**<li>
 </ul>
@@ -81,18 +89,22 @@
 **docker run -d --network network-name --network-alias postgres -v mydb:/var/lib/mydb -e POSTGRES_PASSWORD=mysecretpassword postgres**</li>
 
 <li>Сonnect to the database and verify it connects.<br>
+
 **docker exec -it <mysql-container-id> mysql -p</li>**
 </ol>
 
 Получить информацию о сетевых параметрах с помощью Netshoot:<br>
 <ul>
 <li>
+
 **docker run -it --network todo-app nicolaka/netshoot**</li>
 
 <li>
+
 **dig mysql** // mysql здесь, это параметр --network-alias</li>
 
 <li>
+
 или проще: **docker inspect flamboyant_bardeen | grep IPAddress**</li>
 </ul>
 
@@ -156,3 +168,84 @@ ALTER ROLE rolename WITH SUPERUSER;
 
 Change a role's password:
 ALTER ROLE davide WITH PASSWORD 'hu8jmn3';
+
+
+# Official documentation 'getting started'
+1. Создать сеть:
+docker network create todo-app
+
+2. Запустить контейнер с дб
+docker run -d \
+     --network todo-app --network-alias mysql \
+     -v todo-mysql-data:/var/lib/mysql \
+     -e MYSQL_ROOT_PASSWORD=secret \
+     -e MYSQL_DATABASE=todos \
+     mysql:5.7
+
+3. Запустить контейнер с приложением
+docker run --rm -dp 3000:3000 \
+   -w /app -v "$(pwd):/app" \
+   --network todo-app \
+   -e MYSQL_HOST=mysql \
+   -e MYSQL_USER=root \
+   -e MYSQL_PASSWORD=secret \
+   -e MYSQL_DB=todos \
+   node:12-alpine \
+   sh -c "yarn install && yarn run dev"
+
+4. проверить подключение к бд
+docker logs <container-id>
+
+
+# AWS config
+
+<h2>I. Database</h2>
+
+docker network create timer-network
+*("Subnet": "172.18.0.0/16", "Gateway": "172.18.0.1")*
+*;; ANSWER SECTION:*
+*for-postgres.           600     IN      A       172.18.0.2*
+
+docker volume create timer-volume
+*("Mountpoint": "/var/lib/docker/volumes/timer-volume/_data",)*
+
+docker run -dp 5432:5432 --network timer-network --network-alias for-postgres \
+ -v timer-volume:/var/lib/postgresql/data
+ -e POSTGRES_PASSWORD=timer \
+ -e POSTGRES_USER=timer \
+ -e POSTGRES_DB=timer_db \
+ postgres:11
+
+ *elastic_margulis*
+
+Открыть tcp/5432 снаружи
+
+Залить данные
+C:\Program Files\PostgreSQL\11\bin\pg_restore.exe --host ec2-3-21-28-177.us-east-2.compute.amazonaws.com	 --port "5432" --username "timer" --dbname "timer_db" --verbose "C:\\Users\\aleksey.grokhotov\\Documents\\timerman\\timer_db.sql"
+
+Закрыть tcp/5432 снаружи
+
+<h2>II. Application</h2>
+
+
+    1. Создать Dockerfile
+        FROM openjdk:8-jdk-alpine
+        RUN addgroup -S spring && adduser -S spring -G spring
+        USER spring:spring
+        ARG JAR_FILE=*.jar
+        COPY ${JAR_FILE} app.jar
+        ENTRYPOINT ["java","-jar","/app.jar"]
+
+    2. Создать образ. Запускаем из папки, где лежит Dockerfile и *.jar (путь к джарнику указан в докерфайле):
+        docker build -t timer-app .  (на стенде: --network host)
+
+    3. Запустить контейнер
+        docker run -dp 8080:8080 timer-app -v /var/www/html/photos/:/var/www/html/photos timer-app (на стенде: --add-host timer_db:172.17.0.2)
+
+    4. Открыть tcp/8080
+
+    5. Проверить подключение через браузер.
+
+    6. если попытка неудачна:
+        - удалить образ и создать заново с парамтером --network host
+        - запустить контейнер с --add-host)
