@@ -237,14 +237,21 @@ C:\Program Files\PostgreSQL\11\bin\pg_restore.exe --host ec2-3-21-28-177.us-east
         ENTRYPOINT ["java","-jar","/app.jar"]
 
     2. Создать образ. Запускаем из папки, где лежит Dockerfile и *.jar (путь к джарнику указан в докерфайле):
-        docker build -t timer-app .  (на стенде: --network host)
+        docker build -t timer-app --network host.  (на стенде: --network host)
+
+        Рабочий вариант:
+        docker build -t timer-app --network host .
 
     3. Запустить контейнер
-        docker run -dp 8080:8080 timer-app -v /var/www/html/photos/:/var/www/html/photos timer-app (на стенде: --add-host timer_db:172.17.0.2)
+        docker run -dp 8080:8080 -v /var/www/html/photos/:/var/www/html/photos timer-app (на стенде: --add-host timer_db:172.18.0.2)
+
+        Не выбрасывал исключение:
+        docker run -dp 8080:8080 -v /var/www/html/photos/:/var/www/html/photos --net="host" timer-app
 
     4. Открыть tcp/8080
 
     5. Проверить подключение через браузер.
+    (org.postgresql.util.PSQLException: Connection to localhost:5432 refused. Check that the hostname and port are correct and that the postmaster is accepting TCP/IP connections.)
 
     6. если попытка неудачна:
         - удалить образ и создать заново с парамтером --network host
