@@ -1,3 +1,5 @@
+# Шпаргалка с командами для докера
+
 <h2>Образы</h2>
 
 **docker images** // Список образов, уже скачанных на компьютер<br>
@@ -131,43 +133,25 @@ CMD - определяет действие по умолчанию, если к
 ENTRYPOINT - выполняет команду при старте контейнера
 
 
-Docker Compose - инструмент для запуска многоконтейнерных докер-приложений. Использует YAML-файл для конфигурирования сервисов.
+
+# Командочки для БД:
+
+Start interactive terminal:<br>
+**psql -d databaseName -U role**
+
+\c - connect to database<br>
+\d - list relations<br>
+
+To create a new role:<br>
+**CREATE ROLE rolename LOGIN;**
+
+Then make the new role a superuser:<br>
+**ALTER ROLE rolename WITH SUPERUSER;**
+
+Change a role's password:<br>
+**ALTER ROLE davide WITH PASSWORD 'hu8jmn3';**
 
 
-
-# Dockerfile for AWS
-FROM openjdk:8-jdk-alpine
-RUN addgroup -S timqergroup && adduser -S timeruser -G timergroup
-USER timeruser:timqergroup
-
- docker run --rm -dp 3000:3000 -w /app -v "$(pwd):/app" node:12-alpine sh -c "yarn install && yarn run dev"
-
-
-Еще подход:
-sudo docker run -d --name some-postgres --volume db-data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=timer -e POSTGRES_DB=timer_db -p 5434:5432 postgres:12-alpine
-
-sudo docker run -d --name postgresTimer2 --volume /var/lib/postgresql/12:/var/lib/postgresql/data -e POSTGRES_PASSWORD=timer -e POSTGRES_DB=timer_db -p 5434:5432 postgres:12-alpine
-
-docker create -v /var/lib/postgresql/12 --name postgresTimer2 alpine
-docker run -p 5432:5432 -e POSTGRES_PASSWORD=timer -d --volumes-from postgresTimer2 postgres
-
-Восстановить базу:
-C:\Program Files\PostgreSQL\11\bin\pg_restore.exe --host "ec2-3-16-55-108.us-east-2.compute.amazonaws.com" --port "5432" --username "timer"  --dbname "new_timer_db" --verbose "C:\\Users\\ALEKSE~1.GRO\\DOCUME~1\\timerman\\BACKUP~1.BAC"
-
-
-DB stuff:
-\c - connect to database
-\d - list relations
-
-
-To create a new role:
-CREATE ROLE rolename LOGIN;
-
-Then make the new role a superuser:
-ALTER ROLE rolename WITH SUPERUSER;
-
-Change a role's password:
-ALTER ROLE davide WITH PASSWORD 'hu8jmn3';
 
 
 # Official documentation 'getting started'
@@ -199,34 +183,41 @@ docker logs <container-id>
 
 # AWS config
 
+
 <h2>I. Database</h2>
 
-docker network create timer-network
-*("Subnet": "172.18.0.0/16", "Gateway": "172.18.0.1")*
-*;; ANSWER SECTION:*
-*for-postgres.           600     IN      A       172.18.0.2*
+	1. Создаем сеть
+		docker network create timer-network
+	
+		*("Subnet": "172.18.0.0/16", "Gateway": "172.18.0.1")*
+		*;; ANSWER SECTION:*
+		*for-postgres.           600     IN      A       172.18.0.2*
 
-docker volume create timer-volume
-*("Mountpoint": "/var/lib/docker/volumes/timer-volume/_data",)*
+	2. Создаем том
+		docker volume create timer-volume
+		*("Mountpoint": "/var/lib/docker/volumes/timer-volume/_data",)*
 
-docker run -dp 5432:5432 --network timer-network --network-alias for-postgres \
- -v timer-volume:/var/lib/postgresql/data
- -e POSTGRES_PASSWORD=timer \
- -e POSTGRES_USER=timer \
- -e POSTGRES_DB=timer_db \
- postgres:11
+	3. Запускаем контейнер с БД
+		docker run -dp 5432:5432 --network timer-network --network-alias for-postgres \
+			-v timer-volume:/var/lib/postgresql/data
+			-e POSTGRES_PASSWORD=timer \
+			-e POSTGRES_USER=timer \
+			-e POSTGRES_DB=timer_db \
+			postgres:11
 
- *elastic_margulis*
+			*elastic_margulis*
+			
+	4. Заливаем данные
 
-Открыть tcp/5432 снаружи
+	Открыть tcp/5432 снаружи
+	C:\Program Files\PostgreSQL\11\bin\pg_restore.exe --host ec2-3-21-28-177.us-east-2.compute.amazonaws.com	 --port "5432" --username "timer" --dbname "timer_db" --verbose "C:\\Users\\aleksey.grokhotov\\Documents\\timerman\\timer_db.sql"
+	Закрыть tcp/5432 снаружи
 
-Залить данные
-C:\Program Files\PostgreSQL\11\bin\pg_restore.exe --host ec2-3-21-28-177.us-east-2.compute.amazonaws.com	 --port "5432" --username "timer" --dbname "timer_db" --verbose "C:\\Users\\aleksey.grokhotov\\Documents\\timerman\\timer_db.sql"
 
-Закрыть tcp/5432 снаружи
 
 <h2>II. Application</h2>
 
+Перед сборкой джарника В исходниках поменять адрес бд на тот, который у бд-контейнера.
 
     1. Создать Dockerfile
         FROM openjdk:8-jdk-alpine
@@ -237,22 +228,29 @@ C:\Program Files\PostgreSQL\11\bin\pg_restore.exe --host ec2-3-21-28-177.us-east
         ENTRYPOINT ["java","-jar","/app.jar"]
 
     2. Создать образ. Запускаем из папки, где лежит Dockerfile и *.jar (путь к джарнику указан в докерфайле):
-        docker build -t timer-app --network host.  (на стенде: --network host)
-
-        Рабочий вариант:
-        docker build -t timer-app --network host .
+        docker build -t timer-app --network host . 
 
     3. Запустить контейнер
-        docker run -dp 8080:8080 -v /var/www/html/photos/:/var/www/html/photos timer-app (на стенде: --add-host timer_db:172.18.0.2)
-
-        Не выбрасывал исключение:
-        docker run -dp 8080:8080 -v /var/www/html/photos/:/var/www/html/photos --net="host" timer-app
+	
+        docker run -d -v /var/www/html/photos/:/var/www/html/photos --network=host timer-app
+		
+		--net // Connect a container to a network. Published ports are discarded (no '-p 8080:8080' flag)
 
     4. Открыть tcp/8080
 
     5. Проверить подключение через браузер.
-    (org.postgresql.util.PSQLException: Connection to localhost:5432 refused. Check that the hostname and port are correct and that the postmaster is accepting TCP/IP connections.)
 
-    6. если попытка неудачна:
-        - удалить образ и создать заново с парамтером --network host
-        - запустить контейнер с --add-host)
+
+<h2>III. Frontend</h2>
+
+В исходниках заменить localhost:8080 на адрес контейнера с приложением.
+
+	1. Запустить контейнер nginx, смонтировав свой путь к конфигурации и расположению ресурсов
+		docker run -it -dp 80:80 -v /usr/share/nginx/html:/usr/share/nginx/html:ro -v /etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro nginx:alpine
+				docker run -it -d -v /usr/share/nginx/html:/usr/share/nginx/html:ro -v /etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro --network=host nginx:alpine
+		
+		Ошибка при доступе к бэку:
+		GET http://localhost:8080/api/v1/roles net::ERR_CONNECTION_REFUSED
+		
+		Использовал timer-network и в дб, и в приложении:
+		org.postgresql.util.PSQLException: Connection to localhost:5432 refused
