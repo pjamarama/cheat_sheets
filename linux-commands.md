@@ -8,3 +8,14 @@ top -p `pgrep -d "," postgres` // поиск по имени процесса. �
 
 <h2>Объем определенной директории</h2>
 du -sh directoryName
+
+<h2>Коды для смены прав файла</h2>
+The sums of these numbers give combinations of these permissions:<br>
+0 = no permissions whatsoever; this person cannot read, write, or execute the file.<br>
+1 = execute only.<br>
+2 = write only.<br>
+3 = write and execute (1+2)<br>
+4 = read only<br>
+5 = read and execute (4+1)<br>
+6 = read and write (4+2)<br>
+7 = read and write and execute (4+2+1)<br>
