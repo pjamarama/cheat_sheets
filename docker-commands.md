@@ -231,14 +231,18 @@ docker logs <container-id>
         docker build -t timer-app --network host . 
 
     3. Запустить контейнер
-	
+        В режиме host
         docker run -d -v /var/www/html/photos/:/var/www/html/photos --network=host timer-app
+
+        В режиме user-defined bridge
+        docker run -dp 8080:8080 -v /var/www/html/photos/:/var/www/html/photos --network=timer-network timer-app-2
 		
 		--net // Connect a container to a network. Published ports are discarded (no '-p 8080:8080' flag)
 
     4. Открыть tcp/8080
 
-    5. Проверить подключение через браузер.
+    5. Проверить подключение через браузер:
+        http://3.21.28.177:8080/api/v1/dictionary/blood-types
 
 
 <h2>III. Frontend</h2>
@@ -247,7 +251,7 @@ docker logs <container-id>
 
 	1. Запустить контейнер nginx, смонтировав свой путь к конфигурации и расположению ресурсов
 		docker run -it -dp 80:80 -v /usr/share/nginx/html:/usr/share/nginx/html:ro -v /etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro nginx:alpine
-				docker run -it -d -v /usr/share/nginx/html:/usr/share/nginx/html:ro -v /etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro --network=host nginx:alpine
+		docker run -it -d -v /usr/share/nginx/html:/usr/share/nginx/html:ro -v /etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro --network=host nginx:alpine
 		
 		Ошибка при доступе к бэку:
 		GET http://localhost:8080/api/v1/roles net::ERR_CONNECTION_REFUSED
