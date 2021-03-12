@@ -22,3 +22,9 @@ The sums of these numbers give combinations of these permissions:<br>
 5 = read and execute (4+1)<br>
 6 = read and write (4+2)<br>
 7 = read and write and execute (4+2+1)<br>
+
+<h2>Поиск и замена в nano</h2>
+Press Ctrl + \<br>
+Enter your search string and hit return.<br>
+Enter your replacement string and hit return.<br>
+Press A to replace all instances.<br>
