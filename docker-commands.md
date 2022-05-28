@@ -43,6 +43,9 @@
 Остановка контейнера:<br>
 **docker kill container_id/alias**
 
+Остановить все контейнеры "по-быстрому":<br>
+**docker kill $(docker ps -q)**
+
 Удалить образ из докера. -f удалит образ и все контейнеры, с ним связанные:<br>
 **docker rmi <imagename>**
 
