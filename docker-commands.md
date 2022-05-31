@@ -91,8 +91,8 @@
 
 <h2>Network</h2>
 <ol>
-<li>Create the network:<br>
-**docker network create network-name**</li>
+Create the network:<br>
+**docker network create network-name**
 
 <li>Start a MySQL container and attach it to the network.<br>
 **docker run -d --network network-name --network-alias postgres -v mydb:/var/lib/mydb -e POSTGRES_PASSWORD=mysecretpassword postgres**</li>
