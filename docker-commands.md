@@ -115,6 +115,8 @@
 <li>
 
 или проще: **docker inspect flamboyant_bardeen | grep IPAddress**</li>
+<li>
+или так: **docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' containerName**</li>
 </ul>
 
 
