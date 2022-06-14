@@ -47,7 +47,7 @@
 **docker kill $(docker ps -q)**
 
 Удалить образ из докера. -f удалит образ и все контейнеры, с ним связанные:<br>
-**docker rmi <imagename>**
+**docker rmi image_name**
 
 Удалить все "неиспользуемые" ресурсы:<br>
 **docker system prune**
