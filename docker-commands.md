@@ -149,8 +149,26 @@ ENTRYPOINT - выполняет команду при старте контей�
 Start interactive terminal:<br>
 **psql -d databaseName -U role**
 
-\c - connect to database<br>
-\d - list relations<br>
+\c - connect to database:<br>
+db=# \c
+You are now connected to database "db" as user "user". After that you can perform queries normally.
+
+\d - list relations:<br>
+db=# \d chats
+                                 Table "public.chats"
+ Column |          Type           |                     Modifiers                      
+--------+-------------------------+----------------------------------------------------
+ id     | integer                 | not null default nextval('chats_id_seq'::regclass)
+ name   | character varying(200)  | 
+ image  | character varying(1000) | 
+
+
+\l - list of data bases:<br>
+                                    List of databases
+       Name       |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
+------------------+----------+----------+------------+------------+-----------------------
+ db               | postgres | UTF8     | en_US.utf8 | en_US.utf8 | 
+ postgres         | postgres | UTF8     | en_US.utf8 | en_US.utf8 | 
 
 To create a new role:<br>
 **CREATE ROLE rolename LOGIN;**
@@ -161,7 +179,7 @@ Then make the new role a superuser:<br>
 Change a role's password:<br>
 **ALTER ROLE davide WITH PASSWORD 'hu8jmn3';**
 
-
+Plus sign provides more info in the output, e.g. **\d+**
 
 
 # Official documentation 'getting started'
