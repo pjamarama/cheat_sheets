@@ -62,6 +62,7 @@
 
 <h2>Работа внутри контейнера</h2>
 
+**docker exec –it blabla /bin/bash** // Запуск bash внутри контейнера с id blabla<br> 
 **sudo docker run -it nginx bash** // Запуск bash внутри контейнера nginx <br>
 **sudo docker run nginx cat /etc/nginx/nginx.conf** // возвращает содержимое nginx.conf из контейнера<br>
 **docker run -it -v ~/.bash_history:/root/.bash_history ubuntu bash** // пробрасывает часть файловой системы. Путь до файла во внешней системе должен быть абсолютным. Файлы во внутренней ФС создаются, существующие - затираются.<br>
