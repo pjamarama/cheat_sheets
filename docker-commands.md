@@ -127,9 +127,9 @@
 **docker login -u YOUR-USER-NAME**
 
 Пометить образ:
-**docker tag getting-started pjamarama/getting-started**
+**docker tag getting-started pjamarama/getting-started**  
 Или пометить существующий:
-**docker commit <existing-container> <hub-user>/<repo-name>[:<tag>]**
+**docker commit <existing-container> <hub-user>/<repo-name>[:<tag>]**  
 **docker commit stepik-postgres pjamarama/stepik:stepik-postgres**  
 Запушить образ на хаб:
 **docker push pjamarama/stepik:stepik-postgres**
