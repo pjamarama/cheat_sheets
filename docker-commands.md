@@ -128,9 +128,11 @@
 
 Пометить образ:
 **docker tag getting-started pjamarama/getting-started**
-
+Или пометить существующий:
+**docker commit <existing-container> <hub-user>/<repo-name>[:<tag>]**
+**docker commit stepik-postgres pjamarama/stepik:stepik-postgres**  
 Запушить образ на хаб:
-**docker push pjamarama/getting-started**
+**docker push pjamarama/stepik:stepik-postgres**
 
 
 <h2>Создание Dockerfile</h2> 
